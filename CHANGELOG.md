@@ -1,5 +1,14 @@
 # igraph Python interface changelog
 
+## [main]
+
+### Added
+
+- Added an `induced` argument to `Graph.subisomorphic_vf2()`,
+  `Graph.count_subisomorphisms_vf2()` and
+  `Graph.get_subisomorphisms_vf2()`. It defaults to `False` to preserve
+  non-induced matching behavior.
+
 ## 1.0.1 - 2025-12-26
 
 ### Changed
