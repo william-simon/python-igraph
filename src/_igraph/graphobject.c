@@ -10997,16 +10997,18 @@ PyObject *igraphmodule_Graph_subisomorphic_vf2(igraphmodule_GraphObject * self,
   igraph_vector_int_t *edge_color1=0, *edge_color2=0;
   igraphmodule_i_Graph_isomorphic_vf2_callback_data_t callback_data;
   igraph_error_t retval;
+  int induced = 0;
 
   static char *kwlist[] = { "other", "color1", "color2", "edge_color1", "edge_color2",
     "return_mapping_12", "return_mapping_21",
     "callback", "node_compat_fn", "edge_compat_fn",
+    "induced",
     NULL };
 
   if (!PyArg_ParseTupleAndKeywords
-      (args, kwds, "O!|OOOOOOOOO", kwlist, igraphmodule_GraphType, &o,
+      (args, kwds, "O!|OOOOOOOOOp", kwlist, igraphmodule_GraphType, &o,
        &color1_o, &color2_o, &edge_color1_o, &edge_color2_o, &return1, &return2,
-       &callback_fn, &node_compat_fn, &edge_compat_fn))
+       &callback_fn, &node_compat_fn, &edge_compat_fn, &induced))
     return NULL;
 
   other=(igraphmodule_GraphObject*)o;
@@ -11067,14 +11069,14 @@ PyObject *igraphmodule_Graph_subisomorphic_vf2(igraphmodule_GraphObject * self,
         color1, color2, edge_color1, edge_color2, &res, map12, map21,
         node_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_node_compat_fn,
         edge_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_edge_compat_fn,
-        &callback_data);
+        &callback_data, induced);
   } else {
     retval = igraph_get_subisomorphisms_vf2_callback(&self->g, &other->g,
         color1, color2, edge_color1, edge_color2, map12, map21,
         igraphmodule_i_Graph_isomorphic_vf2_callback_fn,
         node_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_node_compat_fn,
         edge_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_edge_compat_fn,
-        &callback_data);
+        &callback_data, induced);
   }
 
   if (color1) { igraph_vector_int_destroy(color1); free(color1); }
@@ -11136,14 +11138,15 @@ PyObject *igraphmodule_Graph_count_subisomorphisms_vf2(igraphmodule_GraphObject 
   igraph_vector_int_t *edge_color1=0, *edge_color2=0;
   igraphmodule_GraphObject *other;
   igraphmodule_i_Graph_isomorphic_vf2_callback_data_t callback_data;
+  int induced = 0;
 
   static char *kwlist[] = { "other", "color1", "color2", "edge_color1",
-    "edge_color2", "node_compat_fn", "edge_compat_fn", NULL };
+    "edge_color2", "node_compat_fn", "edge_compat_fn", "induced", NULL };
 
   if (!PyArg_ParseTupleAndKeywords
-      (args, kwds, "O!|OOOOOO", kwlist, igraphmodule_GraphType, &o,
+      (args, kwds, "O!|OOOOOOp", kwlist, igraphmodule_GraphType, &o,
          &color1_o, &color2_o, &edge_color1_o, &edge_color2_o,
-         &node_compat_fn, &edge_compat_fn))
+         &node_compat_fn, &edge_compat_fn, &induced))
     return NULL;
 
   other=(igraphmodule_GraphObject*)o;
@@ -11189,7 +11192,7 @@ PyObject *igraphmodule_Graph_count_subisomorphisms_vf2(igraphmodule_GraphObject 
         edge_color1, edge_color2, &res,
         node_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_node_compat_fn,
         edge_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_edge_compat_fn,
-        &callback_data)) {
+        &callback_data, induced)) {
     igraphmodule_handle_igraph_error();
     if (color1) { igraph_vector_int_destroy(color1); free(color1); }
     if (color2) { igraph_vector_int_destroy(color2); free(color2); }
@@ -11226,14 +11229,15 @@ PyObject *igraphmodule_Graph_get_subisomorphisms_vf2(igraphmodule_GraphObject *s
   igraph_vector_int_t *color1=0, *color2=0;
   igraph_vector_int_t *edge_color1=0, *edge_color2=0;
   igraphmodule_i_Graph_isomorphic_vf2_callback_data_t callback_data;
+  int induced = 0;
 
   static char *kwlist[] = { "other", "color1", "color2", "edge_color1",
-    "edge_color2", "node_compat_fn", "edge_compat_fn", NULL };
+    "edge_color2", "node_compat_fn", "edge_compat_fn", "induced", NULL };
 
   if (!PyArg_ParseTupleAndKeywords
-      (args, kwds, "O!|OOOOOO", kwlist, igraphmodule_GraphType, &o,
+      (args, kwds, "O!|OOOOOOp", kwlist, igraphmodule_GraphType, &o,
        &color1_o, &color2_o, &edge_color1_o, &edge_color2_o,
-       &node_compat_fn, &edge_compat_fn))
+       &node_compat_fn, &edge_compat_fn, &induced))
     return NULL;
 
   if (igraph_vector_int_list_init(&res, 0)) {
@@ -11283,7 +11287,7 @@ PyObject *igraphmodule_Graph_get_subisomorphisms_vf2(igraphmodule_GraphObject *s
         edge_color1, edge_color2, &res,
         node_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_node_compat_fn,
         edge_compat_fn == Py_None ? 0 : igraphmodule_i_Graph_isomorphic_vf2_edge_compat_fn,
-        &callback_data)) {
+        &callback_data, induced)) {
     igraphmodule_handle_igraph_error();
     if (color1) { igraph_vector_int_destroy(color1); free(color1); }
     if (color2) { igraph_vector_int_destroy(color2); free(color2); }
@@ -18164,7 +18168,8 @@ struct PyMethodDef igraphmodule_Graph_methods[] = {
    METH_VARARGS | METH_KEYWORDS,
    "subisomorphic_vf2(other, color1=None, color2=None, edge_color1=None,\n"
    "  edge_color2=None, return_mapping_12=False, return_mapping_21=False,\n"
-   "  callback=None, node_compat_fn=None, edge_compat_fn=None)\n--\n\n"
+   "  callback=None, node_compat_fn=None, edge_compat_fn=None,\n"
+   "  induced=False)\n--\n\n"
    "Checks whether a subgraph of the graph is isomorphic to another graph.\n\n"
    "Vertex and edge colors may be used to restrict the isomorphisms, as only\n"
    "vertices and edges with the same color will be allowed to match each other.\n\n"
@@ -18206,6 +18211,7 @@ struct PyMethodDef igraphmodule_Graph_methods[] = {
    "  criteria that are too complicated to be represented by edge color\n"
    "  vectors (i.e. the C{edge_color1} and C{edge_color2} parameters). C{None}\n"
    "  means that every edge is compatible with every other node.\n"
+   "@param induced: whether to require the matched subgraph to be induced.\n"
    "@return: if no mapping is calculated, the result is C{True} if the graph\n"
    "  contains a subgraph that's isomorphic to the given one, C{False}\n"
    "  otherwise. If any or both mappings are calculated, the result is a\n"
@@ -18218,7 +18224,7 @@ struct PyMethodDef igraphmodule_Graph_methods[] = {
    METH_VARARGS | METH_KEYWORDS,
    "count_subisomorphisms_vf2(other, color1=None, color2=None,\n"
    "  edge_color1=None, edge_color2=None, node_compat_fn=None,\n"
-   "  edge_compat_fn=None)\n--\n\n"
+   "  edge_compat_fn=None, induced=False)\n--\n\n"
    "Determines the number of subisomorphisms between the graph and another one\n\n"
    "Vertex and edge colors may be used to restrict the isomorphisms, as only\n"
    "vertices and edges with the same color will be allowed to match each other.\n\n"
@@ -18247,13 +18253,14 @@ struct PyMethodDef igraphmodule_Graph_methods[] = {
    "  criteria that are too complicated to be represented by edge color\n"
    "  vectors (i.e. the C{edge_color1} and C{edge_color2} parameters). C{None}\n"
    "  means that every edge is compatible with every other node.\n"
+   "@param induced: whether to count only induced subgraph isomorphisms.\n"
    "@return: the number of subisomorphisms between the two given graphs\n"},
   {"get_subisomorphisms_vf2",
    (PyCFunction) igraphmodule_Graph_get_subisomorphisms_vf2,
    METH_VARARGS | METH_KEYWORDS,
    "get_subisomorphisms_vf2(other, color1=None, color2=None,\n"
    "  edge_color1=None, edge_color2=None, node_compat_fn=None,\n"
-   "  edge_compat_fn=None)\n--\n\n"
+   "  edge_compat_fn=None, induced=False)\n--\n\n"
    "Returns all subisomorphisms between the graph and another one\n\n"
    "Vertex and edge colors may be used to restrict the isomorphisms, as only\n"
    "vertices and edges with the same color will be allowed to match each other.\n\n"
@@ -18282,6 +18289,7 @@ struct PyMethodDef igraphmodule_Graph_methods[] = {
    "  criteria that are too complicated to be represented by edge color\n"
    "  vectors (i.e. the C{edge_color1} and C{edge_color2} parameters). C{None}\n"
    "  means that every edge is compatible with every other node.\n"
+   "@param induced: whether to return only induced subgraph isomorphisms.\n"
    "@return: a list of lists, each item of the list containing the mapping\n"
    "  from vertices of the second graph to the vertices of the first one\n"},
 

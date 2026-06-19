@@ -303,6 +303,35 @@ class SubisomorphismTests(unittest.TestCase):
         g2.es[0]["color"] = [2]
         self.assertTrue(not g.subisomorphic_vf2(g2, node_compat_fn=node_compat))
 
+    def testInducedSubisomorphicVF2(self):
+        triangle = Graph.Full(3)
+        path = Graph([(0, 1), (1, 2)])
+
+        self.assertTrue(triangle.subisomorphic_vf2(path))
+        self.assertFalse(triangle.subisomorphic_vf2(path, induced=True))
+
+        self.assertEqual(6, triangle.count_subisomorphisms_vf2(path))
+        self.assertEqual(
+            0, triangle.count_subisomorphisms_vf2(path, induced=True)
+        )
+
+        self.assertEqual(6, len(triangle.get_subisomorphisms_vf2(path)))
+        self.assertEqual(
+            [], triangle.get_subisomorphisms_vf2(path, induced=True)
+        )
+
+        transitive_triangle = Graph(
+            [(0, 1), (1, 2), (0, 2)], directed=True
+        )
+        directed_path = Graph([(0, 1), (1, 2)], directed=True)
+
+        self.assertTrue(transitive_triangle.subisomorphic_vf2(directed_path))
+        self.assertFalse(
+            transitive_triangle.subisomorphic_vf2(
+                directed_path, induced=True
+            )
+        )
+
     def testCountSubisomorphisms(self):
         g = Graph.Lattice([3, 3], circular=False)
         g2 = Graph.Lattice([2, 2], circular=False)
